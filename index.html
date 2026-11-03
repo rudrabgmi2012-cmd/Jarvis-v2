@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Jarvis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#000;--card:#0f0f0f;--tx:#f2f2f2;--mu:#8a8a8a;--bd:#232323;--me:#1c1c1c;--ok:#fff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+h1{font:600 18px Georgia,serif;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+.ic{background:none;border:0;width:40px;height:40px;font-size:20px;border-radius:50%}
+#main{flex:1;min-height:0;overflow-y:auto;padding:0 16px}
+#gr0{padding-top:24px}#clk{font:300 56px Georgia,serif}#dt{color:var(--mu)}#gr{font:24px Georgia,serif;margin:18px 0 14px}
+#cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;text-decoration:none;color:var(--tx);display:flex;flex-direction:column;gap:4px}
+small{color:var(--mu)}
+#chat{padding:8px 0}.m{max-width:94%;padding:9px 13px;border-radius:16px;margin:8px 0;font-size:15px;white-space:pre-wrap}
+.m.u{background:var(--me);margin-left:auto}.m.j{padding-left:0}
+.cf{border:1px solid var(--bd);border-radius:14px;padding:10px;margin:8px 0;font-size:14px;background:var(--card)}
+.cf a,.cf button{display:inline-block;margin:6px 6px 0 0;padding:8px 14px;border-radius:10px;border:1px solid var(--bd);background:none;text-decoration:none;color:var(--tx)}
+.cf a{background:#f2f2f2;color:#000;border-color:#f2f2f2}
+#st{color:var(--mu);font-size:13px;text-align:center;min-height:18px;padding:4px}
+.box{margin:0 12px 12px;background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:8px;display:flex;align-items:center;gap:4px;position:relative}
+.box input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--tx);font:inherit;padding:8px}
+.box .ic.act{background:#f2f2f2;color:#000}#st{color:var(--mu);font-size:13px;text-align:center;min-height:18px}
+#snd{background:#f2f2f2;color:#000;width:36px;height:36px;margin-left:2px}#snd svg,.ic svg{display:block;margin:auto}.box .ic{width:36px;height:36px}
+#menu{display:none;position:absolute;bottom:58px;left:0;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:6px;min-width:170px}
+#menu.open{display:block}#menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 12px;border-radius:10px}
+#menu button:active{background:var(--me)}
+#set{position:fixed;inset:0;background:var(--bg);overflow-y:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px 40px;display:none;max-width:560px;margin:0 auto;z-index:5}
+#set h2{font-size:13px;color:var(--mu);margin:22px 0 8px;text-transform:uppercase;letter-spacing:1px}
+.it{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin:6px 0}
+.chip{padding:8px 14px;border-radius:20px;border:1px solid var(--bd);background:none}
+input[type=password]{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);margin:4px 0}
+.dot{color:var(--mu)}
+</style></head><body>
+<header><h1>Jarvis <span id="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#444;margin-left:6px;vertical-align:middle"></span></h1><button class="ic" id="gear" aria-label="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></header>
+<div id="main"><div id="gr0"><div id="clk"></div><div id="dt"></div><div id="gr"></div><div id="cards"></div></div><div id="chat"></div></div>
+<div id="st"></div>
+<div class="box"><div id="menu"><button id="mc">Camera</button><button id="mp">Photos</button><button id="mf">Files</button></div>
+<button class="ic" id="plus" aria-label="Add"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button><input id="tx" placeholder="Message Jarvis" autocomplete="off">
+<button class="ic" id="mic" aria-label="Voice"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="ic" id="snd" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+<input type="file" id="fc" accept="image/*" capture="environment" hidden><input type="file" id="ff" accept="image/*,.txt,.md,.csv,.json" hidden>
+<div id="set">
+<div class="it"><b>Settings</b><button class="chip" id="back">Done</button></div>
+<h2>API keys</h2>
+<input type="password" id="k1" placeholder="AI brain key"><input type="password" id="k2" placeholder="Wake word key (Picovoice)">
+<h2>Safety</h2>
+<div class="it"><span>Ask before calling, texting or posting</span><input type="checkbox" id="ask" checked></div>
+<h2>Connected apps</h2><div id="apps"></div>
+<h2>Memory</h2><div id="mem"></div>
+<div style="margin-top:8px"><button class="chip" id="clr">Clear memory</button></div>
+</div>
+<script src="wake.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const S={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let voiceMode=false,memory=S.get("mem",[]),hist=[],listening=false,wake=true,awake=false,speaking=false,busy=false,pending=null,rec=null,attach=null,sample=null;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const APPS=[["Gmail","https://mail.google.com"],["YouTube","https://www.youtube.com"],["Maps","https://maps.google.com"],["Instagram","https://www.instagram.com"],["WhatsApp","https://wa.me"],["Google Calendar","https://calendar.google.com"],["Google Drive","https://drive.google.com"]];
+function st(t){$("st").textContent=t;clearTimeout(st.t);if(t)st.t=setTimeout(()=>{$("st").textContent=""},4000)}
+function dot(on,msg){$("dot").style.background=on?"#fff":"#444";$("dot").title=msg||""}
+let add;
+add=function(t,c){const d=document.createElement("div");d.className="m "+c;d.textContent=t;$("chat").appendChild(d);$("chat").scrollTop=1e9;return d}
+function speak(t){return new Promise(r=>{if(!window.speechSynthesis){r();return}
+speaking=true;try{rec&&rec.stop()}catch(e){}
+const u=new SpeechSynthesisUtterance(t);u.onend=u.onerror=()=>{speaking=false;r();startRec()};
+speechSynthesis.cancel();speechSynthesis.speak(u)})}
+async function say(t){add(t,"j");if(voiceMode)await speak(t)}
+function startRec(){if(!listening||speaking||!SR)return;try{rec.start()}catch(e){}}
+function setup(){if(!SR)return false;if(rec)return true;rec=new SR();rec.continuous=true;rec.interimResults=false;rec.lang="en-US";rec.maxAlternatives=3;
+rec.onstart=()=>dot(true);
+rec.onresult=e=>{const r=e.results[e.results.length-1];let t=r[0].transcript.trim();for(let i=0;i<r.length;i++){if(re0.test(r[i].transcript)){t=r[i].transcript.trim();break}}if(t)heard(t)};
+rec.onend=()=>{dot(false);if(listening&&!speaking)setTimeout(startRec,300)};
+rec.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){listening=false;dot(false,"Mic blocked");st("Wake word blocked here. Use the mic button.")}};return true}
+const re0=/\b(?:jarvis|jarvas|jarves|jarvus|travis|jarvi|jervis|service)\b/i;
+async function startListen(){if(!setup())return;try{const m=await navigator.mediaDevices.getUserMedia({audio:true});m.getTracks().forEach(t=>t.stop())}catch(e){dot(false,"Mic blocked");return}
+listening=true;awake=!wake;startRec()}
+function stopListen(){listening=false;awake=false;try{rec&&rec.stop()}catch(e){}dot(false)}
+async function heard(t){if(busy)return;const re=/\b(?:(?:hey|hay|hi|a)[, ]+)?(?:jarvis|jarvas|jarves|jarvus|travis|jarvi|jervis|service)\b[ ,.]*/i;let x=t;
+if(wake&&!awake){if(!re.test(t))return;x=t.replace(re,"").trim();awake=true;if(!x){st("Yes?");await speak("Yes?");return}}
+else x=t.replace(re,"").trim()||t;
+voiceMode=true;add(x,"u");busy=true;try{await handle(x)}finally{busy=false;if(wake){awake=false;st("Say “Hey Jarvis”…")}else st("Listening…")}}
+function conf(label,url,spoken){const ask=$("ask").checked;const d=document.createElement("div");d.className="cf";
+d.innerHTML="<div>"+label+"</div>";const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";a.textContent="Yes, do it";
+const n=document.createElement("button");n.textContent="Cancel";n.onclick=()=>{pending=null;d.remove()};d.append(a,n);$("chat").appendChild(d);$("chat").scrollTop=1e9;
+pending=a;return say(spoken+(ask?" Say yes to confirm, or tap the button.":" Tap the button to go.")).then(()=>{if(!ask)a.click()})}
+async function handle(x){const l=x.toLowerCase().replace(/[.!?]/g,"").trim();
+if(pending){if(/^(yes|yeah|yep|sure|do it|confirm|go ahead)/.test(l)){const p=pending;pending=null;p.click();await say("Done.");return}
+if(/^(no|nope|cancel|stop|don’t|dont)/.test(l)){pending=null;document.querySelectorAll(".cf").forEach(e=>e.remove());await say("Cancelled.");return}}
+let m;if(m=l.match(/^(?:remember|memorize)(?: that)? (.+)/)){memory.push(m[1]);S.set("mem",memory);renderMem();await say("Got it. I’ll remember that.");return}
+if(/^(forget everything|clear (my )?memory)/.test(l)){memory=[];S.set("mem",memory);renderMem();await say("Memory cleared.");return}
+if(m=l.match(/^(?:call|phone|dial) (.+)/)){const n=m[1].replace(/\D/g,"");
+if(n.length>=5)return conf("Call "+n+"?","tel:"+n,"Call "+n.split("").join(" ")+"?");
+await say("I can’t read your contacts from the web app yet. Say the phone number, or I can open your dialer.");return}
+if(m=l.match(/^(?:text|message|sms) (\d[\d ]+?)(?: (?:saying|that says|say) (.+))?$/)){const n=m[1].replace(/\D/g,""),b=m[2]||"";
+return conf("Text "+n+(b?": “"+b+"”":"")+"?","sms:"+n+(b?"?body="+encodeURIComponent(b):""),"Open a text to "+n+"?")}
+if(m=l.match(/^(?:navigate|directions|take me|map|find on map)(?: to)? (.+)/))return conf("Maps: "+m[1],"https://www.google.com/maps/search/"+encodeURIComponent(m[1]),"Opening Maps for "+m[1]+".");
+if(m=l.match(/^(?:play|search youtube for) (.+)/))return conf("YouTube: "+m[1],"https://www.youtube.com/results?search_query="+encodeURIComponent(m[1]),"Searching YouTube for "+m[1]+".");
+if(m=l.match(/^(?:open|launch|start) (.+)/)){const a=APPS.find(p=>m[1].includes(p[0].toLowerCase().replace("google ","")));if(a)return conf("Open "+a[0]+"?",a[1],"Open "+a[0]+"?")}
+await think(x)}
+async function think(x){st("");const d=add("…","j");
+try{const key=S.get("k1","");if(!key)throw{code:"nokey"};
+const sys="You are Jarvis, the CEO’s personal AI assistant: a highly capable, professional AI that helps with everything, including research, writing, planning, business, websites, video ideas, job leads, analysis and coding. Think like a skilled expert on a small company team and give complete, useful answers at the length the task needs. Write in plain text with short paragraphs, and use simple dashed lists only when they help. Never use markdown symbols like asterisks or hashes. Be honest about what you can’t do yet (such as posting or sending on your own) and offer a clear plan instead. "+(voiceMode?"The CEO spoke by voice, so keep this reply to a few short sentences.":"")+"\nWhat you know about the CEO: "+(memory.join("; ")||"nothing yet")+"\n";
+const msgs=hist.slice(-8).map(h=>({role:h.r,content:h.c}));while(msgs.length&&msgs[0].role!=="user")msgs.shift();
+let content=x;if(attach){const b=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(",")[1]);f.readAsDataURL(attach)});content=[{type:"image",source:{type:"base64",media_type:attach.type||"image/jpeg",data:b}},{type:"text",text:x}];attach=null}
+msgs.push({role:"user",content});
+const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-5-5",max_tokens:1500,system:sys,messages:msgs})});
+const j=await res.json();if(!res.ok)throw{code:"api",message:(j.error&&j.error.message)||res.status};
+const t=j.content.filter(c=>c.type==="text").map(c=>c.text).join("\n").trim();
+d.textContent=t;hist.push({r:"user",c:x},{r:"assistant",c:t});if(voiceMode)await speak(t)}
+catch(e){d.textContent=e.code==="nokey"?"Add your AI brain key in Settings first.":"Error: "+(e.message||"couldn’t reach my brain")}}
+async function file(f){if(!f)return;if(f.type.startsWith("image/")){attach=f;add("Photo attached","u");await speak("Got the photo. What should I do with it?")}
+else{const t=(await f.text()).slice(0,6000);hist.push({r:"user",c:"[File "+f.name+"]\n"+t},{r:"assistant",c:"I have read that file."});add(f.name,"u");await speak("I read the file. What would you like to know?")}}
+
+$("fc").onchange=e=>{file(e.target.files[0]);e.target.value=""};$("ff").onchange=e=>{file(e.target.files[0]);e.target.value=""};
+function renderMem(){$("mem").innerHTML=memory.length?memory.map(m=>"<div class='it'><span></span></div>").join(""):"<small>No memories yet</small>";
+[...$("mem").querySelectorAll("span")].forEach((s,i)=>s.textContent=memory[i])}
+function renderApps(){$("apps").innerHTML="";APPS.forEach(a=>{const d=document.createElement("div");d.className="it";d.innerHTML="<span>"+a[0]+"</span><span class='dot'>● Not connected</span>";$("apps").appendChild(d)})}
+$("clr").onclick=()=>{memory=[];S.set("mem",memory);renderMem()};
+$("gear").onclick=()=>{$("set").style.display="block"};$("back").onclick=()=>{S.set("k1",$("k1").value);S.set("k2",$("k2").value);S.set("ask",$("ask").checked);$("set").style.display="none";startWake()};
+$("k1").value=S.get("k1","");$("k2").value=S.get("k2","");$("ask").checked=S.get("ask",true);renderMem();renderApps();
+
+
+function tick(){const n=new Date();$("clk").textContent=n.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});$("dt").textContent=n.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"});const h=n.getHours();$("gr").textContent=h<12?"Good morning, CEO":h<18?"Good afternoon, CEO":"Good evening, CEO"}
+tick();setInterval(tick,15000);
+async function send(){const t=$("tx").value.trim();if(!t||busy)return;$("tx").value="";$("gr0").style.display="none";voiceMode=false;add(t,"u");busy=true;try{await handle(t)}finally{busy=false}}
+$("snd").onclick=send;$("tx").onkeydown=e=>{if(e.key==="Enter")send()};
+$("plus").onclick=()=>$("menu").classList.toggle("open");
+$("mc").onclick=()=>{$("menu").classList.remove("open");$("fc").click()};$("mp").onclick=()=>{$("menu").classList.remove("open");$("ff").click()};$("mf").onclick=$("mp").onclick;
+const _add=add;add=function(t,c){$("gr0").style.display="none";return _add(t,c)};
+function renderCards(){$("cards").innerHTML="";APPS.slice(0,4).forEach(a=>{const d=document.createElement("a");d.className="card";d.href=a[1];d.target="_blank";d.rel="noopener";d.innerHTML="<b></b><small>● Not connected</small>";d.querySelector("b").textContent=a[0];$("cards").appendChild(d)})}
+renderCards();
+let one=null;
+function talk(){if(!SR){st("Voice input isn’t supported in this browser");return}
+if(one){try{one.stop()}catch(e){}return}
+const was=listening;listening=false;try{rec&&rec.stop()}catch(e){}
+const o=new SR();o.lang="en-US";o.interimResults=true;o.continuous=false;one=o;$("mic").classList.add("act");let fin="";
+o.onresult=e=>{let t="";for(const x of e.results)t+=x[0].transcript;$("tx").value=t;if(e.results[e.results.length-1].isFinal)fin=t};
+o.onerror=e=>st(e.error==="not-allowed"||e.error==="service-not-allowed"?"Microphone blocked here":e.error==="no-speech"?"Didn’t hear anything":"Couldn’t listen: "+e.error);
+o.onend=()=>{one=null;$("mic").classList.remove("act");listening=was;const t=fin.trim();$("tx").value="";
+if(t&&!busy){voiceMode=true;add(t,"u");busy=true;handle(t).finally(()=>{busy=false;if(was)startRec()})}else if(was)startRec()};
+try{o.start()}catch(e){st("Microphone unavailable");one=null;$("mic").classList.remove("act");listening=was}}
+$("mic").onclick=()=>cycle(false);
+$("dot").onclick=()=>startWake();
+
+let wakeOn=false;
+async function startWake(){const key=S.get("k2","");if(!window.Wake){st("Voice engine didn’t load");return}
+if(!key){st("Add your wake word key in Settings");return}
+try{await Wake.stop();wakeOn=false;dot(false);await Wake.start(key,()=>cycle(true));wakeOn=true;dot(true)}catch(e){wakeOn=false;dot(false);st("Wake word error: "+(e&&e.message||e))}}
+async function cycle(fromWake){if(busy)return;busy=true;const was=wakeOn;
+try{if(was){await Wake.stop();wakeOn=false;dot(false)}
+st("Listening…");const t=await Wake.listen();st("");
+if(t&&t.trim()){voiceMode=true;add(t.trim(),"u");await handle(t.trim())}}
+catch(e){st("Voice error: "+(e&&e.message||e))}
+finally{busy=false;if(was)startWake()}}
+setTimeout(startWake,800);
+</script></body></html>
